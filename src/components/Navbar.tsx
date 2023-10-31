@@ -8,6 +8,7 @@ import {
   getKindeServerSession,
 } from "@kinde-oss/kinde-auth-nextjs/server";
 import UserAccountNav from "./UserAccountNav";
+import MobileNav from "./MobileNav";
 
 const Navbar = () => {
 
@@ -23,6 +24,7 @@ return (
         </Link>
 
         {/* mobile navbar for later*/}
+        <MobileNav isAuth={!!user} />
 
         <div className="hidden items-center space-x-4 sm:flex">
           {!user ? (
@@ -49,8 +51,7 @@ return (
                   size: "sm",
                 })}
               >
-                Get started {' '}
-                <ArrowRight className="ml-1.5 h-5 w-5" />
+                Get started <ArrowRight className="ml-1.5 h-5 w-5" />
               </RegisterLink>
             </>
           ) : (
