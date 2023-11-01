@@ -3,7 +3,26 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 
-const prisma = new PrismaClient().$extends(withAccelerate());
+const prismaClientSingleton = () => {
+  return new PrismaClient().$extends(withAccelerate());
+};
+
+type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClientSingleton | undefined;
+};
+
+const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
+
+export const db = prisma;
+
+export const runtime =
+  process.env.NODE_ENV === "production" ? "edge" : "nodejs";
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+
 
 // declare global {
 //   // eslint-disable-next-line no-var
@@ -20,4 +39,4 @@ const prisma = new PrismaClient().$extends(withAccelerate());
 //   prisma = global.cachedPrisma;
 // }
 
-export const db = prisma;
+//export const db = prisma;
