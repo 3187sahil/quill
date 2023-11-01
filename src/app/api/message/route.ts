@@ -9,6 +9,8 @@ import { NextRequest } from "next/server";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 
 
+export const runtime = "edge";
+
 
 export const POST = async (req: NextRequest) => {
   // endpoint for asking a question to a pdf file
@@ -76,19 +78,20 @@ const formattedPrevMessages = prevMessages.map((msg) => ({
   content: msg.text,
 }));
 
-const response = await openai.chat.completions.create({
-  model: "gpt-3.5-turbo-16k",
-  temperature: 0,
-  stream: true,
-  messages: [
-    {
-      role: "system",
-      content:
-        "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
-    },
-    {
-      role: "user",
-      content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
+//const response = await openai.chat.completions.create({
+  const response = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo-16k",
+    temperature: 0,
+    stream: true,
+    messages: [
+      {
+        role: "system",
+        content:
+          "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
+      },
+      {
+        role: "user",
+        content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
         
   \n----------------\n
   
@@ -104,9 +107,9 @@ const response = await openai.chat.completions.create({
   ${results.map((r) => r.pageContent).join("\n\n")}
   
   USER INPUT: ${message}`,
-    },
-  ],
-});
+      },
+    ],
+  });
 
 const stream = OpenAIStream(response, {
   async onCompletion(completion) {
