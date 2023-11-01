@@ -17,8 +17,8 @@ const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 export const db = prisma;
 
-export const runtime =
-  process.env.NODE_ENV === "production" ? "edge" : "nodejs";
+// export const runtime =
+//   process.env.NODE_ENV === "production" ? "edge" : "nodejs";
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
